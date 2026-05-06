@@ -1,0 +1,572 @@
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الأثر | الواجهة الرسمية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --deep-eggplant: #1a0b25; 
+            --burnt-orange: #c2521a;
+            --dark-overlay: #0d0512;
+        }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--dark-overlay); color: #d1d5db; margin: 0; scroll-behavior: smooth; overflow-x: hidden; }
+        .cinematic-bg { background: radial-gradient(circle at center, var(--deep-eggplant) 0%, var(--dark-overlay) 100%); min-height: 100vh; }
+        nav { background: rgba(13, 5, 18, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(194, 82, 26, 0.2); }
+        .hero-section { width: 100%; height: 500px; margin-top: 72px; position: relative; overflow: hidden; border-bottom: 3px solid var(--burnt-orange); }
+        .hero-image { width: 100%; height: 100%; object-fit: cover; }
+
+        .btn-premium { background: linear-gradient(135deg, #c2521a 0%, #a34113 100%); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; border: none; }
+        .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(194, 82, 26, 0.4); }
+
+        .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(194, 82, 26, 0.1); backdrop-filter: blur(10px); transition: all 0.3s ease; }
+        .modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); align-items: center; justify-content: center; overflow-y: auto; }
+
+        .role-badge { background: rgba(194, 82, 26, 0.1); border: 1px solid var(--burnt-orange); color: var(--burnt-orange); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .svg-icon { width: 3rem; height: 3rem; fill: currentColor; }
+
+        .secret-blur { filter: blur(40px); transition: filter 0.4s ease; cursor: pointer; user-select: none; }
+        .secret-blur:active { filter: blur(0); }
+
+        .game-input { background: rgba(255,255,255,0.08); border: 2px solid rgba(194, 82, 26, 0.3); color: white; border-radius: 1rem; padding: 0.75rem; outline: none; text-align: center; width: 100%; font-size: 1.1rem; font-weight: bold; }
+        .game-input:focus { border-color: var(--burnt-orange); }
+
+        #view-privacy { background: radial-gradient(circle, #2a0b0b 0%, #0d0512 100%); }
+        
+        .nav-logo-brand {
+            height: 40px;
+            width: auto;
+            margin-left: 12px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+            section {
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+                padding-top: 4rem !important;
+                padding-bottom: 4rem !important;
+            }
+            .text-5xl, .text-6xl {
+                font-size: 2.5rem !important;
+                line-height: 1.2;
+            }
+            .glass-card {
+                padding: 1.5rem !important;
+                border-radius: 1.5rem !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav .max-w-6xl {
+                flex-direction: column !important;
+                gap: 15px !important;
+                padding-top: 15px !important;
+                padding-bottom: 15px !important;
+            }
+            nav .flex.items-center.gap-3 {
+                width: 100%;
+                justify-content: center;
+            }
+            .hidden.md\:flex {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: center !important;
+                gap: 12px !important;
+                width: 100%;
+                padding: 0 !important;
+                background: transparent !important;
+            }
+            .hidden.md\:flex a, 
+            .hidden.md\:flex span {
+                font-size: 11px !important; 
+                white-space: nowrap;
+            }
+            .hidden.md\:flex button {
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 12px !important;
+                margin: 0 !important;
+            }
+            .hero-section {
+                height: 300px !important;
+                margin-top: 110px !important;
+            }
+            #about p {
+                font-size: 1rem !important;
+                line-height: 1.7 !important;
+            }
+        }
+    </style>
+</head>
+<body class="cinematic-bg">
+
+   <nav class="fixed top-0 w-full z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <div class="flex items-center gap-3">
+            <img src="مع خلفيه.png" class="nav-logo-brand" alt="Logo">
+            <div class="text-2xl font-black text-white tracking-tighter italic uppercase">الأثــــر</div>
+        </div>
+
+        <div class="hidden md:flex gap-8 items-center font-bold text-xs uppercase tracking-[0.2em]">
+            <a href="#" class="text-orange-500">الرئيسية</a>
+            <div class="flex items-center gap-1">
+                <span class="opacity-50 text-slate-400">القصة</span>
+                <span class="text-[7px] bg-orange-700/40 text-orange-500 px-1 border border-orange-500/30 rounded">قريباً</span>
+            </div>
+            <a href="#about" class="hover:text-orange-500 transition-colors">فكرة اللعبة</a>
+            <a href="#team" class="hover:text-orange-500 transition-colors">فريق العمل</a>
+            <button onclick="openHowTo()" class="w-8 h-8 flex items-center justify-center rounded-full border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition-all font-black uppercase">؟</button>
+        </div>
+    </div>
+</nav>
+
+    <section class="hero-section">
+        <img src="hero-image.png" alt="Hero Illustration" class="hero-image">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0512] via-transparent to-transparent"></div>
+    </section>
+
+    <section class="max-w-sm mx-auto px-6 -mt-16 relative z-10 text-center">
+        <button onclick="openGameSetup()" class="btn-premium w-full py-5 rounded-2xl text-2xl font-black text-white shadow-2xl mb-4 uppercase tracking-widest">إنشاء غرفة لعب</button>
+        <p class="text-[9px] tracking-[0.4em] text-slate-500 uppercase font-bold">Project Directed by Rawan Al-Ghamdi</p>
+    </section>
+
+    <section id="about" class="max-w-5xl mx-auto px-8 py-32 text-right">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-6">
+                <h3 class="text-orange-600 font-black text-xs tracking-[0.5em] uppercase">The Vision</h3>
+                <h2 class="text-4xl font-black text-white leading-tight">ما هي لعبة الأثر؟</h2>
+                <p class="text-slate-300 leading-relaxed text-lg text-justify font-medium">الأثر ليست مجرد لعبة، بل هي صراع بين الدهاء والتضليل. في عالمٍ مليء بالخيوط المتشابكة، يتوزع اللاعبون بين محققين يسعون لكشف الحقيقة، وناشر يحاول تمرير رسالة سرية لشريكه الكاشف، ومضلل بارع يسعى لقلب الطاولة على الجميع.</p>
+            </div>
+            <div class="glass-card p-10 rounded-3xl border-r-4 border-orange-600 shadow-2xl flex flex-col justify-center">
+                <p class="text-white font-black text-2xl mb-4">كلمة واحدة.. هي الأثر</p>
+                <p class="text-slate-300 text-md leading-relaxed text-justify font-medium">تكمن الصعوبة في دقة اختيار الكلمة؛ فكلمة واحدة قد تكون هي الأثر الذي ينجيك من كيد المضللين، أو الخيط الذي يوقع بك في فخهم. هنا، ذكاؤك هو السلاح الوحيد للفوز.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="max-w-6xl mx-auto px-8 py-24 border-t border-white/5 text-right">
+        <div class="text-center mb-20">
+            <h3 class="text-orange-500 font-black text-xs tracking-[0.5em] uppercase mb-3">The Masterminds</h3>
+            <h2 class="text-5xl font-black text-white uppercase tracking-tighter mb-4">نخبة الإبداع</h2>
+            <p class="text-slate-400 mt-4 text-md font-bold italic">طالبات الصف الثالث ثانوي - المبدعات خلف مشروع الأثر 2026</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-20">
+            <div class="glass-card p-8 rounded-2xl border-t-4 border-orange-600 flex flex-col items-center text-center">
+                <svg class="svg-icon text-orange-500 mb-6" viewBox="0 0 24 24"><path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/></svg>
+                <h4 class="text-white font-black text-xl mb-1">روان الغامدي</h4>
+                <p class="text-orange-500 text-[10px] font-black tracking-widest uppercase mb-4">مديرة المشروع</p>
+                <p class="text-slate-300 text-sm leading-relaxed font-bold italic">العقل المدبر والقوة القيادية خلف الأثر. صاحبة الرؤية التي حولت الفكرة إلى واقع مهيب والمشرفة على أدق تفاصيل النجاح.</p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl border-t-4 border-slate-700 flex flex-col items-center text-center">
+                <svg class="svg-icon text-slate-400 mb-6" viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+                <h4 class="text-white font-black text-xl mb-1">رنيم الزهراني</h4>
+                <p class="text-slate-400 text-[10px] font-black tracking-widest uppercase mb-4">المبرمجة</p>
+                <p class="text-slate-300 text-sm leading-relaxed font-bold italic">المسؤولة عن بناء الأنظمة البرمجية، محولةً الأفكار والمنطق الجاف إلى تجربة تقنية تفاعلية حية وسلسة.</p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl border-t-4 border-slate-700 flex flex-col items-center text-center">
+                <svg class="svg-icon text-slate-400 mb-6" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-3.58-8-8-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12z"/></svg>
+                <h4 class="text-white font-black text-xl mb-1">سلاف الغامدي</h4>
+                <p class="text-slate-400 text-[10px] font-black tracking-widest uppercase mb-4">الرسامة</p>
+                <p class="text-slate-300 text-sm leading-relaxed font-bold italic">الفنانة التي جسدت ملامح الغموض وبثت الروح في شخصيات الأثر من خلال ريشتها الإبداعية وتصاميمها الفنية.</p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl border-t-4 border-slate-700 flex flex-col items-center text-center">
+                <svg class="svg-icon text-slate-400 mb-6" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                <h4 class="text-white font-black text-xl mb-1">غلا العنزي</h4>
+                <p class="text-slate-400 text-[10px] font-black tracking-widest uppercase mb-4">المصممة</p>
+                <p class="text-slate-300 text-sm leading-relaxed font-bold italic">مهندسة التجربة البصرية، التي جعلت من واجهة اللعبة لوحة فنية متناغمة تأسر الأبصار وتسهل رحلة اللاعب.</p>
+            </div>
+        </div>
+        <div class="flex justify-center">
+            <div class="inline-block px-14 py-10 glass-card rounded-[2.5rem] border border-orange-500/30 shadow-2xl text-center">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-[0.4em] mb-3">تحت إشراف الأستاذة القديرة والمُلهمة</p>
+                <h5 class="text-white font-black text-4xl tracking-tighter">مي البليس</h5>
+            </div>
+        </div>
+    </section>
+
+    <div id="howToPlay" class="modal flex p-6" onclick="closeHowTo()">
+        <div class="glass-card max-w-2xl w-full p-12 rounded-[2.5rem] relative" onclick="event.stopPropagation()">
+            <button onclick="closeHowTo()" class="absolute top-8 left-8 text-slate-500 text-2xl font-black">✕</button>
+               <h2 class="text-3xl font-black text-orange-500 mb-12 text-center uppercase tracking-widest">من انت ؟</h2>
+            <div class="space-y-8 text-right font-bold">
+                <div class="border-r-4 border-orange-600 pr-6">
+                    <h3 class="text-white font-black text-xl italic italic">الناشر <span class="role-badge mr-2">Core</span></h3>
+                    <p class="text-slate-300 text-sm italic">أنت تملك "الأثر" (كلمة مختلفة قليلاً). هدفك التلميح للكاشف ليعرف كلمتك، دون أن يكتشفك المحققون.</p>
+                </div>
+                <div class="border-r-4 border-slate-700 pr-6">
+                    <h3 class="text-white font-black text-xl italic italic">الكاشف <span class="role-badge mr-2">Partner</span></h3>
+                    <p class="text-slate-300 text-sm italic">لا تملك كلمة! وظيفتك مراقبة تلميحات الناشر واستنتاج كلمته في نهاية اللعبة.</p>
+                </div>
+                <div class="border-r-4 border-slate-700 pr-6">
+                    <h3 class="text-white font-black text-xl italic italic">المحقق <span class="role-badge mr-2">Guard</span></h3>
+                    <p class="text-slate-300 text-sm italic">تملك الكلمة الأصلية. ابحث عن الشخص الذي يلمح بكلمات غريبة أو الشخص الذي يبدو تائهاً.</p>
+                </div>
+                <div class="border-r-4 border-slate-700 pr-6">
+                    <h3 class="text-white font-black text-xl italic italic">المضلل <span class="role-badge mr-2">Ghost</span></h3>
+                    <p class="text-slate-300 text-sm italic">تملك الحقيقة ولكنك تبيع الوهم. اجعلهم يشكون فيك ويصوتون ضدك لتسرق نقاطهم!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameLogicModal" class="modal flex p-6">
+        <div class="glass-card max-w-xl w-full p-10 rounded-[3rem] relative border-orange-600/50 overflow-y-auto max-h-[90vh]">
+            <button onclick="document.getElementById('gameLogicModal').style.display='none'" class="absolute top-8 left-8 text-slate-500 font-black">✕</button>
+            
+            <div id="view-setup" class="space-y-8">
+                <div class="text-center"><h2 class="text-3xl font-black text-orange-500 uppercase italic">خصّص لعبتك</h2></div>
+                <div class="flex flex-wrap gap-2 justify-center mb-6">
+                    <button onclick="pickCategory('teachers', this)" class="cat-btn border-2 border-orange-500 px-4 py-2 rounded-xl text-[10px] font-black text-white">المعلمات (خاص)</button>
+                    <button onclick="pickCategory('brands', this)" class="cat-btn border-2 border-white/20 px-4 py-2 rounded-xl text-[10px] font-black text-white">براندات</button>
+                    <button onclick="pickCategory('food', this)" class="cat-btn border-2 border-white/20 px-4 py-2 rounded-xl text-[10px] font-black text-white">أكل</button>
+                    <button onclick="pickCategory('places', this)" class="cat-btn border-2 border-white/20 px-4 py-2 rounded-xl text-[10px] font-black text-white">أماكن</button>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-500 mr-2 uppercase">عدد اللاعبين</label>
+                        <select id="pCount" onchange="genInputs()" class="game-input">
+                            <option value="4">4 لاعبين</option><option value="5">5 لاعبين</option><option value="6">6 لاعبين</option><option value="7">7 لاعبين</option><option value="8">8 لاعبين</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-slate-500 mr-2 uppercase">مستوى الصعوبة</label>
+                        <select id="pLevel" class="game-input">
+                            <option value="1">سهل</option><option value="2">متوسط</option><option value="3">صعب</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="inputGroup" class="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto p-4 bg-black/20 rounded-2xl"></div>
+                <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-black opacity-50 uppercase">
+                    <div>جولات<input id="roundIn" type="number" value="3" class="game-input mt-1"></div>
+                    <div>وقت التلميحة<input id="hintIn" type="number" value="20" class="game-input mt-1"></div>
+                    <div>وقت النقاش<input id="discIn" type="number" value="60" class="game-input mt-1"></div>
+                </div>
+                <button onclick="startIdentityPhase()" class="btn-premium w-full py-5 rounded-2xl text-xl font-black italic">بدأ الجولة</button>
+            </div>
+
+            <div id="view-id" class="hidden text-center space-y-8 py-6">
+                <h3 class="text-2xl font-black text-white italic">مرر الجهاز لـ: <br><span id="pNameDisplay" class="text-orange-500 text-4xl underline"></span></h3>
+                <div class="p-10 bg-black/40 rounded-[3rem] border-2 border-orange-500/20 secret-blur mx-auto max-w-sm">
+                    <img id="roleImg" src="" class="w-40 h-40 mx-auto mb-4 object-contain opacity-80">
+                    <h4 id="roleLabel" class="text-orange-500 font-black text-4xl mb-4 italic"></h4>
+                    <p id="wordLabel" class="text-white font-black text-2xl italic tracking-widest"></p>
+                    <p id="extraLabel" class="text-orange-300 text-sm mt-6 font-bold"></p>
+                </div>
+                <button onclick="nextIdStep()" class="btn-premium w-full py-5 rounded-2xl font-black text-xl italic uppercase">اللاعب التالي</button>
+            </div>
+
+            <div id="view-play" class="hidden text-center space-y-12">
+                <div class="flex justify-between items-center border-b-2 border-orange-500/10 pb-6">
+                    <span id="roundLabel" class="text-orange-500 font-black text-2xl italic">الجولة 1</span>
+                    <span id="activePlayer" class="text-white font-black text-3xl italic underline underline-offset-8"></span>
+                </div>
+                <div id="timerDisplay" class="text-[10rem] font-black text-white italic tabular-nums leading-none">20</div>
+                <button onclick="nextTurn()" class="btn-premium w-full py-6 rounded-3xl font-black text-2xl italic uppercase">التالي</button>
+            </div>
+
+            <div id="view-disc" class="hidden text-center py-10 space-y-10">
+                <h2 class="text-5xl font-black text-orange-500 italic uppercase leading-tight">وقت النقاش</h2>
+                <div id="discTimer" class="text-9xl font-black text-white italic tabular-nums">60</div>
+                <button onclick="showVotePhase()" class="btn-premium w-full py-6 rounded-3xl font-black text-2xl italic">المرحلة الرابعة: التصويت</button>
+            </div>
+
+            <div id="view-privacy" class="hidden text-center py-12 space-y-10">
+                <h2 class="text-6xl font-black text-orange-500 animate-pulse italic">قِف !</h2>
+                <p class="text-white text-2xl font-black">أعطِ الهاتف للاعب: <br><span id="privacyName" class="text-orange-500 text-4xl underline"></span></p>
+                <button onclick="startIndividualVote()" class="btn-premium w-full py-6 rounded-3xl font-black text-2xl italic">أنا هو اللاعب، ابدأ</button>
+            </div>
+
+            <div id="view-vote" class="hidden text-center py-6 space-y-6">
+                <h2 id="voteQuestionTitle" class="text-2xl font-black text-orange-500 italic uppercase">من هو الناشر؟</h2>
+                <div id="voteOptions" class="grid grid-cols-2 gap-4"></div>
+            </div>
+
+            <div id="view-final-reveal" class="hidden text-center py-6 space-y-8">
+                <h2 class="text-3xl font-black text-white italic">كشف الأثر</h2>
+                <div class="p-6 bg-white/5 rounded-3xl border border-orange-500/30">
+                    <p class="text-orange-500 text-xl font-bold mb-2">الناشر كان: <span id="finalPublisherName" class="text-white underline"></span></p>
+                    <p class="text-white text-xl font-black mb-6 italic underline underline-offset-4">يا كاشف، ماهو الأثر؟ (كلمة الناشر)</p>
+                    <div id="wordChallengeOptions" class="grid grid-cols-1 gap-3"></div>
+                </div>
+            </div>
+
+            <div id="view-results" class="hidden text-center py-6 space-y-6">
+                <h2 class="text-4xl font-black text-orange-500 italic">نتائج اللعب</h2>
+                <div id="scoreBoard" class="space-y-3"></div>
+                <button onclick="location.reload()" class="btn-premium w-full py-5 rounded-full text-white font-black text-xl">لعب مرة أخرى</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // دوال النوافذ
+        function openHowTo() { document.getElementById('howToPlay').style.display = 'flex'; }
+        function closeHowTo() { document.getElementById('howToPlay').style.display = 'none'; }
+
+        function openGameSetup() { 
+            document.getElementById('gameLogicModal').style.display = 'flex'; 
+            const views = ['view-setup','view-id','view-play','view-disc','view-privacy','view-vote','view-final-reveal','view-results'];
+            views.forEach(v => document.getElementById(v).classList.add('hidden'));
+            document.getElementById('view-setup').classList.remove('hidden');
+            genInputs();
+        }
+
+        function genInputs() {
+            const c = document.getElementById('pCount').value;
+            const container = document.getElementById('inputGroup');
+            container.innerHTML = '';
+            for(let i=1; i<=c; i++) container.innerHTML += `<input type="text" placeholder="اللاعب ${i}" class="game-input p-in mb-1">`;
+        }
+
+        // البيانات
+        const categories = {
+            teachers: [['خيرية', 'سحر'], ['حليمة', 'فوزية'], ['وفاء', 'منيره'], ['جميلة', 'منال'], ['مي', 'ريم'], ['سلوى', 'فاطمة'], ['عبير', 'ندى'], ['وضحى', 'سعدى']],
+            brands: [['ديور', 'شانيل'], ['جيفنشي', 'فندي'], ['سيفورا', 'ماك'], ['اديداس', 'نايك'], ['زارا', 'مانغو']],
+            food: [['ورق عنب', 'ملفوف'], ['باستا', 'بيتزا'], ['سوشي', 'نودلز'], ['مجدرة', 'مناقيش'], ['كبسه', 'سليق'], ['مرقوق', 'مطازيز'],  ['معصوب', 'عريكة']],
+            places: [['مدرسة','جامعة'], ['فندق','شقة مفروشة'], ['بحر','مسبح'], ['حديقة','غابة'],['مطعم','بوفيه']]
+        };
+        const globalDistractors = ["كتاب", "قلم", "شمس", "قمر", "بحر", "ورد", "سماء"];
+
+        let selectedCategory = 'teachers';
+        let state = { 
+            r: [], cIdx: 0, curRound: 1, activeP: 0, timer: null, turnOrder: [], 
+            votes: { publisher: {}, revealer: {}, traitor: {} },
+            voterIdx: 0, voteStep: 1, scores: {}, currentPair: []
+        };
+
+        function pickCategory(catName, btn) {
+            selectedCategory = catName;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.replace('border-orange-500', 'border-white/20'));
+            btn.classList.replace('border-white/20', 'border-orange-500');
+        }
+
+        // المرحلة 1 و 2
+        function startIdentityPhase() {
+            const names = Array.from(document.querySelectorAll('.p-in')).map(i => i.value || i.placeholder);
+            const level = document.getElementById('pLevel').value;
+            const currentList = categories[selectedCategory];
+            state.currentPair = currentList[Math.floor(Math.random() * currentList.length)];
+            
+            let roles = ['ناشر', 'كاشف', 'محقق', 'محقق'];
+            while(roles.length < names.length) roles.push('محقق');
+            if(level == "3") roles[roles.length-1] = 'مضلل';
+            roles = roles.sort(() => Math.random() - 0.5);
+
+            state.r = names.map((n, i) => {
+                const r = roles[i];
+                let w = (r === 'ناشر') ? state.currentPair[1] : (r === 'كاشف' ? 'لا تملك كلمة' : state.currentPair[0]);
+                return { name: n, role: r, word: w, extra: '', id: i };
+            });
+
+            const pub = state.r.find(x => x.role === 'ناشر');
+            const rev = state.r.find(x => x.role === 'كاشف');
+            if (pub && rev) {
+                pub.extra = `الكاشف هو: ${rev.name}`;
+                if(level == "1") rev.extra = `الناشر هو: ${pub.name}`;
+            }
+
+            state.turnOrder = names.map((_, i) => i).sort(() => Math.random() - 0.5);
+            state.cIdx = 0;
+            document.getElementById('view-setup').classList.add('hidden');
+            document.getElementById('view-id').classList.remove('hidden');
+            showId();
+        }
+
+        function showId() {
+            const p = state.r[state.cIdx];
+            document.getElementById('pNameDisplay').innerText = p.name;
+            document.getElementById('roleLabel').innerText = p.role;
+            document.getElementById('wordLabel').innerText = p.word;
+            document.getElementById('extraLabel').innerText = p.extra;
+
+            let imgSrc = '';
+            if (p.role === 'ناشر') imgSrc = 'publisher.png';
+            else if (p.role === 'كاشف') imgSrc = 'revealer.png';
+            else if (p.role === 'محقق') imgSrc = 'detective.png';
+            else if (p.role === 'مضلل') imgSrc = 'traitor.png';
+            
+            document.getElementById('roleImg').src = imgSrc;
+        }
+
+        function nextIdStep() {
+            if(state.cIdx < state.r.length - 1) { state.cIdx++; showId(); }
+            else { document.getElementById('view-id').classList.add('hidden'); document.getElementById('view-play').classList.remove('hidden'); startTurn(); }
+        }
+
+        // المرحلة 3: جولات اللعب
+        function startTurn() {
+            const pIdx = state.turnOrder[state.activeP];
+            document.getElementById('activePlayer').innerText = state.r[pIdx].name;
+            document.getElementById('roundLabel').innerText = `الجولة ${state.curRound}`;
+            let t = parseInt(document.getElementById('hintIn').value);
+            document.getElementById('timerDisplay').innerText = t;
+            state.timer = setInterval(() => {
+                t--; document.getElementById('timerDisplay').innerText = t;
+                if(t <= 0) nextTurn();
+            }, 1000);
+        }
+
+        function nextTurn() {
+            clearInterval(state.timer);
+            if(state.activeP < state.r.length - 1) { state.activeP++; startTurn(); }
+            else {
+                if(state.curRound < document.getElementById('roundIn').value) { state.curRound++; state.activeP = 0; startTurn(); }
+                else { document.getElementById('view-play').classList.add('hidden'); document.getElementById('view-disc').classList.remove('hidden'); startDiscTimer(); }
+            }
+        }
+
+        function startDiscTimer() {
+            let t = parseInt(document.getElementById('discIn').value);
+            document.getElementById('discTimer').innerText = t;
+            state.timer = setInterval(() => {
+                t--; document.getElementById('discTimer').innerText = t;
+                if(t <= 0) clearInterval(state.timer);
+            }, 1000);
+        }
+
+        // المرحلة 4: التصويت والخصوصية
+        function showVotePhase() {
+            clearInterval(state.timer);
+            state.voterIdx = 0;
+            document.getElementById('view-disc').classList.add('hidden');
+            showPrivacyScreen();
+        }
+
+        function showPrivacyScreen() {
+            const voter = state.r[state.voterIdx];
+            document.getElementById('privacyName').innerText = voter.name;
+            document.getElementById('view-privacy').classList.remove('hidden');
+            document.getElementById('view-vote').classList.add('hidden');
+        }
+
+        function startIndividualVote() {
+            document.getElementById('view-privacy').classList.add('hidden');
+            document.getElementById('view-vote').classList.remove('hidden');
+            state.voteStep = 1; 
+            renderVoteOptions();
+        }
+
+        function renderVoteOptions() {
+            const level = document.getElementById('pLevel').value;
+            const container = document.getElementById('voteOptions');
+            const title = document.getElementById('voteQuestionTitle');
+            container.innerHTML = '';
+
+            if (state.voteStep === 1) title.innerText = "1. من هو الناشر؟";
+            else if (state.voteStep === 2) title.innerText = "2. من هو الكاشف؟";
+            else if (state.voteStep === 3) title.innerText = "3. من هو المضلل؟";
+
+            state.r.forEach((p, idx) => {
+                if (idx !== state.voterIdx) {
+                    const btn = document.createElement('button');
+                    btn.className = "game-input py-3 text-sm";
+                    btn.innerText = p.name;
+                    btn.onclick = () => handleVoteChoice(idx);
+                    container.appendChild(btn);
+                }
+            });
+        }
+
+        function handleVoteChoice(targetIdx) {
+            const level = document.getElementById('pLevel').value;
+            if (state.voteStep === 1) state.votes.publisher[targetIdx] = (state.votes.publisher[targetIdx] || 0) + 1;
+            else if (state.voteStep === 2) state.votes.revealer[targetIdx] = (state.votes.revealer[targetIdx] || 0) + 1;
+            else if (state.voteStep === 3) state.votes.traitor[targetIdx] = (state.votes.traitor[targetIdx] || 0) + 1;
+
+            if (state.voteStep === 1) { state.voteStep = 2; renderVoteOptions(); }
+            else if (state.voteStep === 2 && level == "3") { state.voteStep = 3; renderVoteOptions(); }
+            else {
+                if (state.voterIdx < state.r.length - 1) { state.voterIdx++; showPrivacyScreen(); }
+                else { showFinalReveal(); }
+            }
+        }
+
+        // كشف الأثر
+        function showFinalReveal() {
+            document.getElementById('view-vote').classList.add('hidden');
+            document.getElementById('view-final-reveal').classList.remove('hidden');
+            
+            const publisher = state.r.find(p => p.role === 'ناشر');
+            document.getElementById('finalPublisherName').innerText = publisher ? publisher.name : 'غير معروف';
+            
+            let categoryWords = [];
+            categories[selectedCategory].forEach(p => categoryWords.push(p[0], p[1]));
+            
+            let opts = [state.currentPair[0], state.currentPair[1]];
+            let filtered = categoryWords.filter(w => !opts.includes(w)).sort(() => Math.random() - 0.5);
+            opts = opts.concat(filtered.slice(0, 3));
+            
+            if (opts.length < 5) {
+                let availableDistractors = globalDistractors.filter(d => !opts.includes(d)).sort(() => Math.random() - 0.5);
+                while(opts.length < 5 && availableDistractors.length > 0) {
+                    opts.push(availableDistractors.pop());
+                }
+            }
+            
+            opts = opts.sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById('wordChallengeOptions');
+            container.innerHTML = '';
+            opts.forEach(o => {
+                const b = document.createElement('button');
+                b.className = "game-input py-4 hover:bg-orange-600 transition-all";
+                b.innerText = o;
+                b.onclick = () => finalizeGame(o === (publisher ? publisher.word : ''));
+                container.appendChild(b);
+            });
+        }
+
+        function finalizeGame(isCorrect) {
+            state.r.forEach(p => state.scores[p.name] = 0);
+            const pub = state.r.find(p => p.role === 'ناشر');
+            const rev = state.r.find(p => p.role === 'كاشف');
+            const tra = state.r.find(p => p.role === 'مضلل');
+
+            if (isCorrect && rev && pub) { state.scores[rev.name] += 2; state.scores[pub.name] += 1; }
+
+            state.r.forEach(p => {
+                if (p.role === 'محقق') state.scores[p.name] += 1;
+            });
+
+            if (tra) {
+                let traIdx = state.r.indexOf(tra);
+                let tricked = (state.votes.publisher[traIdx] || 0) + (state.votes.revealer[traIdx] || 0);
+                state.scores[tra.name] += (tricked * 3);
+            }
+
+            renderScoreBoard();
+        }
+
+        function renderScoreBoard() {
+            document.getElementById('view-final-reveal').classList.add('hidden');
+            document.getElementById('view-results').classList.remove('hidden');
+            const container = document.getElementById('scoreBoard');
+            container.innerHTML = '';
+            state.r.forEach(p => {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-black/40 p-4 rounded-2xl border-r-4 border-orange-500 mb-2">
+                        <div class="text-right">
+                            <span class="text-white font-black block">${p.name}</span>
+                            <span class="text-[10px] text-orange-400 font-bold uppercase">${p.role} | الكلمة: ${p.word}</span>
+                        </div>
+                        <div class="text-3xl font-black text-white italic">${state.scores[p.name]}</div>
+                    </div>`;
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+```
